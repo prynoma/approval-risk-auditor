@@ -9,7 +9,7 @@ const configOverrides: AgentKitConfig = {
     payTo:
       (process.env.PAY_TO as `0x${string}`) ??
       "0x002627cf49A8D42ca59Cbef11f00EB42DA027D34",
-    network: (process.env.NETWORK as any) ?? "base",
+    network: "base",
     defaultPrice: process.env.DEFAULT_PRICE ?? "2222222222222222",
   },
 };
