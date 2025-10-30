@@ -18,10 +18,13 @@ const { app, addEntrypoint } = createAgentApp(
   {
     name: "approval-risk-auditor",
     version: "0.0.1",
-    description: "Scans a wallet for risky token approvals and generates a risk report.",
+    network: "base",
   },
   {
     config: configOverrides,
+    payments: {
+      network: "base",
+    },
   }
 );
 
