@@ -50,18 +50,6 @@ addEntrypoint({
     chain_id: z.string().describe("The chain ID (e.g., 'base', 'mainnet')."),
   }),
   output: outputZodSchema,
-  outputSchema: {
-    input: {
-      type: "http",
-      method: "POST",
-      bodyType: "json",
-      bodyFields: {
-        wallet_address: { type: "string", description: "The wallet address to scan.", required: true },
-        chain_id: { type: "string", description: "The chain ID (e.g., 'base', 'mainnet').", required: true },
-      },
-    },
-    output: zodToJsonSchema(outputZodSchema),
-  },
   async handler({ input }) {
     const riskyApprovals = await scanWalletForRiskyApprovals(input.wallet_address, input.chain_id);
 
