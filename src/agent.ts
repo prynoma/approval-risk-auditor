@@ -37,6 +37,17 @@ addEntrypoint({
     wallet_address: z.string().describe("The wallet address to scan."),
     chain_id: z.string().describe("The chain ID (e.g., 'base', 'mainnet')."),
   }),
+  output: z.object({
+    risky_approvals: z.array(z.object({
+      token_address: z.string(),
+      spender: z.string(),
+      allowance: z.string(),
+      risk_score: z.number(),
+      risk_level: z.string(),
+      risk_factors: z.array(z.string()),
+      revoke_tx_data: z.string(),
+    })),
+  }),
   async handler({ input }) {
     const riskyApprovals = await scanWalletForRiskyApprovals(input.wallet_address, input.chain_id);
 
