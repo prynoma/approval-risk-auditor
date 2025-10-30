@@ -15,11 +15,12 @@
   "dependencies": {
     "@lucid-dreams/agent-kit": "latest",
     "@tenderly/sdk": "^0.3.1",
+    "dotenv": "latest",
     "moralis": "^2.27.2",
     "viem": "^2.38.5",
-    "zod": "^4.1.12",
     "x402-fetch": "latest",
-    "dotenv": "latest"
+    "zod": "^4.1.12",
+    "zod-to-json-schema": "^3.24.6"
   },
   "devDependencies": {
     "@types/node": "^24.7.2",

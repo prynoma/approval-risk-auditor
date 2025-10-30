@@ -10,8 +10,8 @@ config();
 
 const privateKey = process.env.PRIVATE_KEY as Hex | string;
 const baseURL = process.env.RESOURCE_SERVER_URL as string; // e.g. https://example.com
-const endpointPath = process.env.ENDPOINT_PATH as string; // e.g. /weather
-const url = `${baseURL}${endpointPath}`; // e.g. https://example.com/weather
+const endpointPath = process.env.ENDPOINT_PATH as string; // e.g. /entrypoints/check/invoke
+const url = `${baseURL}${endpointPath}`;
 
 if (!baseURL || !privateKey || !endpointPath) {
   console.error("Missing required environment variables");
@@ -28,10 +28,21 @@ if (!baseURL || !privateKey || !endpointPath) {
  */
 async function main(): Promise<void> {
   // const signer = await createSigner("solana-devnet", privateKey); // uncomment for Solana
-  const signer = await createSigner("base-sepolia", privateKey);
+  const signer = await createSigner("base", privateKey);
   const fetchWithPayment = wrapFetchWithPayment(fetch, signer);
 
-  const response = await fetchWithPayment(url, { method: "GET" });
+  const response = await fetchWithPayment(url, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      input: {
+        wallet_address: "0x1234567890123456789012345678901234567890", // Replace with a sample wallet address
+        chain_id: "base",
+      },
+    }),
+  });
   const body = await response.json();
   console.log(body);
 
