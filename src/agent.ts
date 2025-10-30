@@ -9,7 +9,7 @@ const configOverrides: AgentKitConfig = {
     payTo:
       (process.env.PAY_TO as `0x${string}`) ??
       "0x002627cf49A8D42ca59Cbef11f00EB42DA027D34",
-    network: "base",
+    network: (process.env.NETWORK as any) ?? "base",
     defaultPrice: process.env.DEFAULT_PRICE ?? "2222222222222222",
   },
 };
@@ -17,14 +17,13 @@ const configOverrides: AgentKitConfig = {
 const { app, addEntrypoint } = createAgentApp(
   {
     name: "approval-risk-auditor",
-    version: "0.0.1",
-    network: "base",
+    version: "0.1.0",
+    description: "Scans a wallet for risky token approvals and generates a risk report.",
+    social: "https://x.com/approvalriskauditor",
+
   },
   {
     config: configOverrides,
-    payments: {
-      network: "base",
-    },
   }
 );
 
