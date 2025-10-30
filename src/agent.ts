@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { createAgentApp, AgentKitConfig } from "@lucid-dreams/agent-kit";
+import { zodToJsonSchema } from "zod-to-json-schema";
 
 const configOverrides: AgentKitConfig = {
   payments: {
@@ -19,7 +20,7 @@ const { app, addEntrypoint } = createAgentApp(
     name: "approval-risk-auditor",
     version: "0.1.0",
     description: "Scans a wallet for risky token approvals and generates a risk report.",
-    social: "https://x.com/approvalriskauditor",
+   
 
   },
   {
@@ -29,6 +30,18 @@ const { app, addEntrypoint } = createAgentApp(
 
 import { scanWalletForRiskyApprovals } from "./scanner";
 
+const outputZodSchema = z.object({
+  risky_approvals: z.array(z.object({
+    token_address: z.string(),
+    spender: z.string(),
+    allowance: z.string(),
+    risk_score: z.number(),
+    risk_level: z.string(),
+    risk_factors: z.array(z.string()),
+    revoke_tx_data: z.string(),
+  })),
+});
+
 addEntrypoint({
   key: "check",
   description: "Scan a wallet for risky token approvals.",
@@ -36,17 +49,19 @@ addEntrypoint({
     wallet_address: z.string().describe("The wallet address to scan."),
     chain_id: z.string().describe("The chain ID (e.g., 'base', 'mainnet')."),
   }),
-  output: z.object({
-    risky_approvals: z.array(z.object({
-      token_address: z.string(),
-      spender: z.string(),
-      allowance: z.string(),
-      risk_score: z.number(),
-      risk_level: z.string(),
-      risk_factors: z.array(z.string()),
-      revoke_tx_data: z.string(),
-    })),
-  }),
+  output: outputZodSchema,
+  outputSchema: {
+    input: {
+      type: "http",
+      method: "POST",
+      bodyType: "json",
+      bodyFields: {
+        wallet_address: { type: "string", description: "The wallet address to scan.", required: true },
+        chain_id: { type: "string", description: "The chain ID (e.g., 'base', 'mainnet').", required: true },
+      },
+    },
+    output: zodToJsonSchema(outputZodSchema),
+  },
   async handler({ input }) {
     const riskyApprovals = await scanWalletForRiskyApprovals(input.wallet_address, input.chain_id);
 
